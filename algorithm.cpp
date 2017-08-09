@@ -4,6 +4,11 @@
 using namespace std;
 
 #define MAXV  1000 
+#define MAXINT 65555
+int parent[MAXV + 1];
+
+
+
 struct edgenode
 {
     int y;
@@ -28,20 +33,72 @@ void initialize_graph(graph *g, bool directed)
     g -> nedges = 0;
     g -> directed = directed;
     for (i = 1; i<=MAXV; i++) g -> degree[i] = 0;
-    for (i = 1; i<=MAXV; i++) g -> edges[i] = NULL:
+    for (i = 1; i<=MAXV; i++) g -> edges[i] = NULL;
 }
+
+void insert_edge(graph *g, int x, int y, int weight, bool directed)
+{
+    edgenode *p;
+    p = new edgenode;
+    p -> weight = weight;
+    p -> y = y;
+    p -> next = g -> edges[x];
+
+    g -> edges[x] = p;
+    g -> degree[x]++;
+    if (directed == false)
+    {
+        insert_edge(g, y, x, weight, true);
+    }
+    else
+    {
+        g -> nedges++;
+    }
+}
+
 
 void read_graph(graph *g, bool directed)
 {
     int i;
     int  m; 
     int x, y;
-
+    int weight;
     initialize_graph(g, directed);
-    cout << "Enter number of vertices"
+    cout << "Enter number of vertices";
+    cin >> g ->  nvertices;
+    cout << "Enter number of edges";
+    cin >> m;
+    for (i = 1; i <= m; i++)
+    {
+        cout << "Enter the vertex from:";
+        cin >> x;
+        cout << "Enter the vertex to:";
+        cin >> y;
+        cout << "Etner the weight of the edge";
+        cin >> weight;
+        insert_edge(g, x, y, weight, directed);
+    }
 }
 
-int * djikstra(graph *g, int start)
+
+void print_graph(graph *g)
+{
+    int i;
+    edgenode *p;
+    for (i = 1; i <= g->nvertices; i++)
+    {
+        cout << i << "\t";
+        p = g -> edges[i];
+        while (p != NULL)
+        {
+            cout << p->y ;
+            p = p -> next;
+        }
+        cout << endl;
+    }
+}
+
+void djikstra(graph *g, int start)
 {
     int i;
     edgenode *p;
@@ -54,16 +111,16 @@ int * djikstra(graph *g, int start)
 
     for(i = 1; i <= g->nvertices; i++)
     {
-        intree[i] = FALSE;
+        intree[i] = false;
         distance[i] = MAXINT;
         parent[i] = -1;
     }
     distance[start] = 0;
     v = start;
 
-    while(intree[v] == FALSE)
+    while(intree[v] == false)
     {
-        intree[v] = TRUE;
+        intree[v] = true;
         p = g->edges[v];
         while(p != NULL)
         {
@@ -79,14 +136,23 @@ int * djikstra(graph *g, int start)
 
         v = 1;
         dist = MAXINT;
-        for (i = 1; i <= nvertices; i++)
+        for (i = 1; i <= g->nvertices; i++)
         {
-            if((intree[i]==FALSE) && (dist > distance[i]))
+            if((intree[i]==false) && (dist > distance[i]))
             {
                 dist = distance[i];
                 v = i;
             }
         }
     }
-    return distance;
+}
+
+int main(int argc, char const *argv[])
+{
+    graph g;
+    read_graph(&g, false);
+    print_graph(&g);
+    djikstra(&g,1);
+
+    return 0;
 }

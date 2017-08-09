@@ -21,6 +21,7 @@ coords = []
 def onclick(event):
     global number
     global ix, iy
+
     ix, iy = event.xdata, event.ydata
     print ('x = %f, y = %f')%(ix, iy)
 
@@ -39,11 +40,28 @@ def onclick(event):
     plt.show()
     return coords
 
-def  write_circle(a,b):
-    
-    print ("circle")
-    plt.show()
-
 cid = fig.canvas.mpl_connect('button_press_event', onclick)
 
+coordsforedges = []
+def onclick2(event):
+    global coordsforedges
+    if event.dblclick:
+        ix1, iy1 = event.xdata, event.ydata
+        coordsforedges.append((ix1, iy1))
+        print(len(coordsforedges))
+        if (len(coordsforedges) == 2):
+            return
+def callforedges():
+    global coordsforedges
+    edges = input("How many edges do you wish to have in your graph?")
+    for edge in range(edges):
+        edgemaker()
+def edgemaker():
+        print("Change")
+        coordsforedges[:] = []
+        print("success")
+callforedges()            
+cid = fig.canvas.mpl_connect('button_press_event',onclick2)
+
 plt.show()
+

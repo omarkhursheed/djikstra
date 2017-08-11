@@ -5,7 +5,7 @@ using namespace std;
 
 #define MAXV  1000 
 #define MAXINT 65555
-int parent[MAXV + 1];
+int parent[MAXV + 1] = {-1};
 
 
 
@@ -70,11 +70,11 @@ void read_graph(graph *g, bool directed)
     cin >> m;
     for (i = 1; i <= m; i++)
     {
-        cout << "Enter the vertex from:";
+        cout << "Enter the vertex from: ";
         cin >> x;
-        cout << "Enter the vertex to:";
+        cout << "Enter the vertex to: ";
         cin >> y;
-        cout << "Etner the weight of the edge";
+        cout << "Enter the weight of the edge: ";
         cin >> weight;
         insert_edge(g, x, y, weight, directed);
     }
@@ -85,16 +85,29 @@ void print_graph(graph *g)
 {
     int i;
     edgenode *p;
+    cout << "Vertex\tConnected " << endl;
     for (i = 1; i <= g->nvertices; i++)
     {
         cout << i << "\t";
         p = g -> edges[i];
         while (p != NULL)
         {
-            cout << p->y ;
+            cout << p->y << "\t" ;
             p = p -> next;
         }
         cout << endl;
+    }
+}
+
+void find_path(int start, int end, int parents[])
+{
+    if ((start == end) || (end == -1))
+        cout << endl << start;
+    else
+    {
+
+        find_path(start,parents[end],parents);
+        cout << " " << end;
     }
 }
 
@@ -145,14 +158,31 @@ void djikstra(graph *g, int start)
             }
         }
     }
+    
 }
 
 int main(int argc, char const *argv[])
 {
     graph g;
+    int start;
+    int end;
     read_graph(&g, false);
     print_graph(&g);
-    djikstra(&g,1);
+    cout << "Enter the node from which to start: ";
+    cin >> start;
+    cout << "Enter the destination node: ";
+    cin >> end;
+    djikstra(&g,start);
 
+    if (parent[end] == -1 && start != end)
+    {
+        cout << "Path does not exist";
+    }
+    else
+    {
+        cout << "Path from " << start << " to " << end << ":";
+
+        find_path(start,end,parent);
+    }
     return 0;
 }
